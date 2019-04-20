@@ -100,6 +100,8 @@ class Server:
             LOGGER.debug(data)
             raise NetworkException('Unreadable data')
 
+        self._send_message('Your score : {}'.format(self.model.count(player_id)), player_addr)
+
         """
         ################# STEP TWO ################# 
         """
@@ -112,6 +114,8 @@ class Server:
             LOGGER.debug(data)
             raise NetworkException('Unreadable data')
 
+        self._send_message('Your score : {}'.format(self.model.count(player_id)), player_addr)
+
         """
         ################# STEP THREE #################
         """
@@ -121,7 +125,7 @@ class Server:
             try:
                 score = self.model.knock(player_id)
                 identifier = player_id if score > 0 else 0 if player_id is 1 else 1
-                self.end_game(identifier, score)
+                self.end_game(identifier)
                 has_won = True
             except GameException:
                 self.prevent_knock(player_id)
@@ -131,13 +135,16 @@ class Server:
         return has_won
 
     def prevent_knock(self, player_id):
-        self._send_message('You cannot knock yet: your score is {}'.format(self.model.count(player_id)), self.players_addr[player_id])
+        self._send_message('You cannot knock yet: your score is {}'.format(self.model.count(player_id)),
+                           self.players_addr[player_id])
 
-    def end_game(self, player_id, score):
+    def end_game(self, player_id):
         self.players_addr[0], self.players_addr[1] = self.players_addr[1], self.players_addr[0]
         for player_addr in self.players_addr:
-            self._send_message('Player {} has won, scores : {}'.format(player_id, ' - '.join(self.model.score)),
-                               player_addr)
+            self._send_message(
+                'Player {} has won, scores : {}'.format(player_id, ' - '.join([str(score) for score in self.model.score])),
+                player_addr
+            )
 
     def read_data(self, data):
         message = data.decode('utf-8')

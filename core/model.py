@@ -3,6 +3,7 @@ import random
 
 from core.calc import find_best_score
 from utils.constants import CARDS
+from utils.utils import sort
 
 
 class GameException(Exception):
@@ -34,6 +35,7 @@ class Model:
     def draw_card(self, player):
         card = self.stack.pop()
         self.players_cards[player].append(card)
+        self.players_cards[player] = sort(self.players_cards[player])
 
     def steal_card(self, player):
         card = self.discard_pile.pop()
@@ -82,4 +84,3 @@ class Model:
             self.score[defender] += knocker_count - defender_count + 20
 
         return win
-
