@@ -47,7 +47,7 @@ class Model:
 
     def describe(self, player_id):
         return "{} | {}".format('' if len(self.discard_pile) is 0 else self.discard_pile[-1],
-                                ' '.join(self.players_cards[player_id]))
+                                ','.join(self.players_cards[player_id]))
 
     def count(self, player, is_knocker=True):
         if is_knocker:
